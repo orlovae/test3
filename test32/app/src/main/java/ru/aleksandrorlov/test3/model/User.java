@@ -33,9 +33,6 @@ public class User {
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
-    @SerializedName("url")
-    @Expose
-    private String url;
 
     public User() {
     }

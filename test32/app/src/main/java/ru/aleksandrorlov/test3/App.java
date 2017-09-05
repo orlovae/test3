@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import java.util.List;
+import java.util.TreeMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -14,6 +15,7 @@ import ru.aleksandrorlov.test3.controllers.ApiController;
 import ru.aleksandrorlov.test3.data.Contract;
 import ru.aleksandrorlov.test3.model.User;
 import ru.aleksandrorlov.test3.rest.ApiUser;
+import ru.aleksandrorlov.test3.utils.DownloadAvatar;
 
 /**
  * Created by alex on 05.09.17.
@@ -85,6 +87,35 @@ public class App extends Application {
             cv.put(Contract.User.COLUMN_UPDATE_AT, item.getUpdatedAt());
             getContentResolver().insert(Contract.User.CONTENT_URI, cv);
         }
-//        downloadImage();
+        downloadAvatar();
+    }
+
+    private void downloadAvatar() {
+        TreeMap<Integer, String> mapForDownloadAvatar = new TreeMap<>();
+
+        String[] projection = {Contract.User.COLUMN_ID, Contract.User.COLUMN_AVATAR_URL};
+
+        Cursor cursor = getContentResolver().query(Contract.User.CONTENT_URI,
+                projection, null, null, null);
+        try {
+            if (cursor != null && cursor.moveToFirst()){
+                int idColIndex = cursor.getColumnIndex(Contract.User.COLUMN_ID);
+                int avatarURLColIndex = cursor.getColumnIndex(Contract.User.COLUMN_AVATAR_URL);
+                do {
+                    Integer idFromCursor = cursor.getInt(idColIndex);
+                    String avatarURLFromCursor = cursor.getString(avatarURLColIndex);
+                    mapForDownloadAvatar.put(idFromCursor, avatarURLFromCursor);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        DownloadAvatar downloadAvatar = new DownloadAvatar(getApplicationContext(),
+                mapForDownloadAvatar);
+        downloadAvatar.execute();
     }
 }
