@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,7 +29,7 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
     private final String NAME_DIR = "users";
     private final String SCHEME = "file://";
     private final String ERROR_DOWNLOAD = "error_download_image.png";
-    private final String FILE_EXTENSION_JPG = "jpg";
+    private final String FILE_EXTENSION_JPG = "image/jpeg";
 
     private Context context;
     private TreeMap<Integer, String> mapForDownloadAvatar;
@@ -53,27 +54,42 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
             directory = cw.getDir(NAME_DIR, Context.MODE_PRIVATE);
         }
 
-        String pathError = getFileErrorDownloadImage(directory).getAbsolutePath();
+        String pathError = getFileErrorDownloadAvatar(directory).getAbsolutePath();
 
         for (Map.Entry<Integer, String> entry : mapForDownloadAvatar.entrySet()
                 ) {
             String url = entry.getValue();
             Bitmap bitmap = null;
             String fileName = "";
+            String typeImage = "";
             File path = null;
 
-            if (url != null) {
+            if (url != null && !url.equals("")) {
                 try {
                     InputStream inputStream = new URL(url).openStream();
-                    bitmap = BitmapFactory.decodeStream(inputStream);
+
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    bitmap = BitmapFactory.decodeStream(inputStream, null, options);
                     inputStream.close();
+
+                    typeImage = options.outMimeType;
+
+                    options.inSampleSize = calculateInSampleSize(options, 400, 800);
+                    options.inJustDecodeBounds = false;
+                    options.inPreferredConfig = Bitmap.Config.RGB_565;
+
+                    InputStream iS = new URL(url).openStream();
+                    bitmap = BitmapFactory.decodeStream(iS, null, options);
+                    iS.close();
+
                     fileName = createNameFile(url);
                 } catch (Exception e) {
                     entry.setValue(pathError);
                     e.printStackTrace();
                 }
             } else {
-                bitmap = getBitmapErrorDownloadImage();
+                bitmap = getBitmapErrorDownloadAvatar();
                 fileName = ERROR_DOWNLOAD;
             }
 
@@ -87,7 +103,7 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
                 }
 
                 FileOutputStream out = new FileOutputStream(path);
-                String typeImage = getTypeImage(path);
+
 
                 if (typeImage.equals(FILE_EXTENSION_JPG)) {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -122,6 +138,7 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
             context.getContentResolver().update(uri, cv, null, null);
             cv.clear();
         }
+        Log.d("DownloadAvatar", "stop onPostExecute");
     }
 
     private boolean isExternalStorageWritable() {
@@ -142,7 +159,7 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
         return file;
     }
 
-    private Bitmap getBitmapErrorDownloadImage() {
+    private Bitmap getBitmapErrorDownloadAvatar() {
         Bitmap bitmap = null;
         try {
             InputStream inputStream = context.getAssets().open(ERROR_DOWNLOAD);
@@ -154,8 +171,8 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
         return bitmap;
     }
 
-    private File getFileErrorDownloadImage(File directory) {
-        Bitmap bitmap = getBitmapErrorDownloadImage();
+    private File getFileErrorDownloadAvatar(File directory) {
+        Bitmap bitmap = getBitmapErrorDownloadAvatar();
         File file = new File(directory, ERROR_DOWNLOAD);
         try {
             FileOutputStream out = new FileOutputStream(file);
@@ -168,16 +185,36 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
         return file;
     }
 
-    private String getTypeImage(File path) {
-        try {
-            /**3 - количество символов в расширении файла**/
-            int startSubstring = path.getAbsolutePath().toString().length() - 3;
-            int endSubstring = path.getAbsolutePath().toString().length();
-            return path.getAbsolutePath().toString().substring(startSubstring, endSubstring);
+//    private String getTypeImage(File path) {
+//        try {
+//            /**3 - количество символов в расширении файла**/
+//            int startSubstring = path.getAbsolutePath().toString().length() - 3;
+//            int endSubstring = path.getAbsolutePath().toString().length();
+//            return path.getAbsolutePath().toString().substring(startSubstring, endSubstring);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+    private int calculateInSampleSize(BitmapFactory.Options options,
+                                            int reqWidth, int reqHeight) {
+        // Реальные размеры изображения
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+            // Вычисляем наибольший inSampleSize, который будет кратным двум
+            // и оставит полученные размеры больше, чем требуемые
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
         }
-        return null;
+
+        return inSampleSize;
     }
 }
