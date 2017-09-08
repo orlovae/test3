@@ -1,5 +1,6 @@
 package ru.aleksandrorlov.test3;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initFAB();
+
         initFragment();
     }
 
@@ -27,5 +30,9 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fT = getSupportFragmentManager().beginTransaction();
         fT.add(R.id.container, viewUsersFragment);
         fT.commit();
+    }
+
+    private void initFAB() {
+        FloatingActionButton fab =  (FloatingActionButton)findViewById(R.id.fab);
     }
 }
