@@ -1,6 +1,7 @@
 package ru.aleksandrorlov.test3;
 
-import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -10,7 +11,6 @@ import ru.aleksandrorlov.test3.fragment.ViewUsersFragment;
 public class MainActivity extends AppCompatActivity {
     ViewUsersFragment viewUsersFragment;
     EditUserFragment editUserFragment;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         viewUsersFragment = new ViewUsersFragment();
         editUserFragment = new EditUserFragment();
 
-        FragmentTransaction fT = getFragmentManager().beginTransaction();
+        FragmentTransaction fT = getSupportFragmentManager().beginTransaction();
         fT.add(R.id.container, viewUsersFragment);
         fT.commit();
     }

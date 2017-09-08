@@ -77,7 +77,7 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
 
                     options.inSampleSize = calculateInSampleSize(options, 400, 800);
                     options.inJustDecodeBounds = false;
-                    options.inPreferredConfig = Bitmap.Config.RGB_565;
+//                    options.inPreferredConfig = Bitmap.Config.RGB_565;
 
                     InputStream iS = new URL(url).openStream();
                     bitmap = BitmapFactory.decodeStream(iS, null, options);
