@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -11,6 +12,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,7 @@ public class ViewUsersFragment extends Fragment implements LoaderManager.LoaderC
     private int height, width;
 
     private int LOADER_ID = 2;
+    public static final String SEND_USER = "send User";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,6 +75,20 @@ public class ViewUsersFragment extends Fragment implements LoaderManager.LoaderC
                 DividerItemDecoration.VERTICAL));
         recyclerViewAllUsers.setAdapter(adapter);
         recyclerViewAllUsers.setLayoutManager(layoutManager);
+
+        adapter.SetOnItemClickListener(new RecyclerViewAllUsersAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int idServer) {
+                Bundle arg = new Bundle();
+                arg.putInt(SEND_USER, idServer);
+                EditUserFragment editUserFragment = new EditUserFragment();
+                editUserFragment.setArguments(arg);
+                FragmentTransaction fT = getFragmentManager().beginTransaction();
+                fT.replace(R.id.container, editUserFragment);
+                fT.commit();
+            }
+        });
+
     }
 
     @Override

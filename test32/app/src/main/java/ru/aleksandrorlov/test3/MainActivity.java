@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.fab:
 
                 Bundle arg = new Bundle();
-                arg.putString("nameButton", getResources().getString(R.string.button_add));
+                arg.putString(NAME_BUTTON, getResources().getString(R.string.button_add));
 
                 editUserFragment = new EditUserFragment();
                 editUserFragment.setArguments(arg);

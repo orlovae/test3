@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -27,6 +30,7 @@ public class RecyclerViewAllUsersAdapter extends RecyclerView.Adapter<RecyclerVi
     private Context context;
     private Cursor dataCursor;
     private int width, height;
+    OnItemClickListener mItemClickListener;
 
     private final float COMPRESSION_PICTURE = 0.2f;
 
@@ -60,13 +64,13 @@ public class RecyclerViewAllUsersAdapter extends RecyclerView.Adapter<RecyclerVi
     public void onBindViewHolder(ViewHolder holder, int position) {
         dataCursor.moveToPosition(position);
 
-        int idColIndex = dataCursor.getColumnIndex(Contract.User.COLUMN_ID);
+        int idServerColIndex = dataCursor.getColumnIndex(Contract.User.COLUMN_ID_SERVER);
         int firstNameColIndex = dataCursor.getColumnIndex(Contract.User.COLUMN_FIRST_NAME);
         int lastNameColIndex = dataCursor.getColumnIndex(Contract.User.COLUMN_LAST_NAME);
         int emailColIndex = dataCursor.getColumnIndex(Contract.User.COLUMN_EMAIL);
         int avatarPathColIndex = dataCursor.getColumnIndex(Contract.User.COLUMN_AVATAR_PATH);
 
-        int id = dataCursor.getInt(idColIndex);
+        int idServer = dataCursor.getInt(idServerColIndex);
 
         String firstNameFromCursor = dataCursor.getString(firstNameColIndex);
         String lastNameFromCursor = dataCursor.getString(lastNameColIndex);
@@ -86,47 +90,19 @@ public class RecyclerViewAllUsersAdapter extends RecyclerView.Adapter<RecyclerVi
                 .placeholder(R.drawable.progress_animation)
                 .into(holder.imageViewAvatar);
 
-//        holder.imageViewAvatar.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(context, ViewHamsterActivity.class);
-//                intent.putExtra("id", id);
-//                intent.putExtra("title", firstNameFromCursor);
-//                intent.putExtra("description", lastNameFromCursor);
-//                intent.putExtra("imagePath", avatarPath);
-//                intent.putExtra("likeHamster", likeHamsterFromCursor);
-//                context.startActivity(intent);
-//            }
-//        });
+        holder.itemClick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mItemClickListener != null) {
+                    mItemClickListener.onItemClick(idServer);
+                }
+            }
+        });
 
         holder.textViewFirstName.setText(firstNameFromCursor);
         holder.textViewLsatName.setText(lastNameFromCursor);
         holder.textViewEmail.setText(emailFromCursor);
-
-//        holder.checkBoxLikeHamster.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (holder.checkBoxLikeHamster.isChecked()){
-//                    holder.checkBoxLikeHamster.setChecked(true);
-//                } else {
-//                    holder.checkBoxLikeHamster.setChecked(false);
-//                }
-//                selectLikeHamsterToHamsterTable(id, likeHamsterFromCursor);
-//            }
-//        });
     }
-
-//    private void selectLikeHamsterToHamsterTable(int id, boolean likeHamster){
-//        int intLikeHamster = castBooleanToInt(likeHamster);
-//        ContentValues cv = new ContentValues();
-//        cv.put(Contract.Hamster.COLUMN_FAVORITE, intLikeHamster);
-//
-//        String selection = Contract.Hamster.COLUMN_ID + " = ?";
-//        String[] selectionArgs = {Integer.toString(id)};
-//
-//        context.getContentResolver().update(Contract.Hamster.CONTENT_URI, cv, selection,
-//                selectionArgs);
-//    }
 
     @Override
     public int getItemCount() {
@@ -138,6 +114,7 @@ public class RecyclerViewAllUsersAdapter extends RecyclerView.Adapter<RecyclerVi
         TextView textViewFirstName;
         TextView textViewLsatName;
         TextView textViewEmail;
+        View itemClick;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -149,6 +126,15 @@ public class RecyclerViewAllUsersAdapter extends RecyclerView.Adapter<RecyclerVi
             textViewFirstName = (TextView)itemView.findViewById(R.id.text_view_first_name);
             textViewLsatName = (TextView) itemView.findViewById(R.id.text_view_last_name);
             textViewEmail = (TextView) itemView.findViewById(R.id.text_view_email);
+            itemClick = itemView.findViewById(R.id.item);
         }
+    }
+
+    public interface OnItemClickListener {
+        public void onItemClick(int idServer);
+    }
+
+    public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
     }
 }
