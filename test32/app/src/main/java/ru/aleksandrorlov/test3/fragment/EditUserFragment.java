@@ -27,6 +27,16 @@ public class EditUserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = (View)inflater.inflate(R.layout.fragment_edit_user, container, false);
 
+        initViews(view);
+
         return view;
+    }
+
+    private void initViews(View view) {
+        editTextFirstName = (EditText)view.findViewById(R.id.edit_text_first_name);
+        editTextLastName = (EditText)view.findViewById(R.id.edit_text_last_name);
+        editTextEmail = (EditText)view.findViewById(R.id.edit_text_email);
+        editTextAvatarUrl = (EditText)view.findViewById(R.id.edit_text_avatar_url);
+        buttonEdit = (Button)view.findViewById(R.id.button_edit);
     }
 }
