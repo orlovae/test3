@@ -16,6 +16,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FragmentTransaction fT;
     private FloatingActionButton fab;
 
+    public static final String NAME_BUTTON = "nameButton";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initFragment() {
         viewUsersFragment = new ViewUsersFragment();
-        editUserFragment = new EditUserFragment();
+
 
         fT = getSupportFragmentManager().beginTransaction();
         fT.add(R.id.container, viewUsersFragment);
@@ -46,6 +48,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fab:
+
+                Bundle arg = new Bundle();
+                arg.putString("nameButton", getResources().getString(R.string.button_add));
+
+                editUserFragment = new EditUserFragment();
+                editUserFragment.setArguments(arg);
                 fT = getSupportFragmentManager().beginTransaction();
                 fT.replace(R.id.container, editUserFragment);
                 fT.commit();

@@ -11,16 +11,26 @@ import android.widget.EditText;
 
 import ru.aleksandrorlov.test3.R;
 
+import static ru.aleksandrorlov.test3.MainActivity.NAME_BUTTON;
+
 /**
  * Created by alex on 06.09.17.
  */
 
 public class EditUserFragment extends Fragment {
-    EditText editTextFirstName;
-    EditText editTextLastName;
-    EditText editTextEmail;
-    EditText editTextAvatarUrl;
-    Button buttonEdit;
+    private EditText editTextFirstName;
+    private EditText editTextLastName;
+    private EditText editTextEmail;
+    private EditText editTextAvatarUrl;
+    private Button button;
+
+    private String nameButton;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        nameButton = getArguments().getString(NAME_BUTTON);
+        super.onCreate(savedInstanceState);
+    }
 
     @Nullable
     @Override
@@ -37,6 +47,16 @@ public class EditUserFragment extends Fragment {
         editTextLastName = (EditText)view.findViewById(R.id.edit_text_last_name);
         editTextEmail = (EditText)view.findViewById(R.id.edit_text_email);
         editTextAvatarUrl = (EditText)view.findViewById(R.id.edit_text_avatar_url);
-        buttonEdit = (Button)view.findViewById(R.id.button_edit);
+        button = (Button)view.findViewById(R.id.button_edit);
+
+        setNameButton(view);
+    }
+
+    private void setNameButton(View view) {
+        if (nameButton.equals(getResources().getString(R.string.button_add))) {
+            button.setText(nameButton);
+        } else {
+            button.setText(getResources().getString(R.string.button_edit));
+        }
     }
 }
