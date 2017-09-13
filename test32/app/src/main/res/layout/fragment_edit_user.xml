@@ -9,21 +9,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="@string/edit_user_first_name"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:nextFocusRight="@string/edit_user_last_name" />
 
     <EditText
         android:id="@+id/edit_text_last_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="@string/edit_user_last_name"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:nextFocusRight="@string/edit_user_email" />
 
     <EditText
         android:id="@+id/edit_text_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="@string/edit_user_email"
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        android:nextFocusRight="@string/edit_user_avatar_url" />
 
     <EditText
         android:id="@+id/edit_text_avatar_url"

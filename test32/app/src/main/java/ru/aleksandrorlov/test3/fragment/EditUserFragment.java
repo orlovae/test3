@@ -4,14 +4,15 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ru.aleksandrorlov.test3.R;
 import ru.aleksandrorlov.test3.data.Contract;
@@ -23,7 +24,7 @@ import static ru.aleksandrorlov.test3.fragment.ViewUsersFragment.SEND_USER;
  * Created by alex on 06.09.17.
  */
 
-public class EditUserFragment extends Fragment {
+public class EditUserFragment extends Fragment implements View.OnClickListener {
     private EditText editTextFirstName, editTextLastName, editTextEmail, editTextAvatarUrl;
     private Button button;
 
@@ -31,6 +32,9 @@ public class EditUserFragment extends Fragment {
     private int idServer;
 
     private String firstName, lastName, email, avatar;
+
+    private List<EditText> editTextList;
+    private EditText tmpEditText;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,8 +84,10 @@ public class EditUserFragment extends Fragment {
         initViews(view);
 
         if (idServer != -1) {
-            setEditTextView(view);
+            setEditTextView();
         }
+
+        buttonBehavior();
 
         return view;
     }
@@ -93,10 +99,16 @@ public class EditUserFragment extends Fragment {
         editTextAvatarUrl = (EditText)view.findViewById(R.id.edit_text_avatar_url);
         button = (Button)view.findViewById(R.id.button_edit);
 
-        setNameButton(view);
+        setNameButton();
+
+        editTextList = new ArrayList<EditText>();
+        editTextList.add(editTextFirstName);
+        editTextList.add(editTextLastName);
+        editTextList.add(editTextEmail);
+        editTextList.add(editTextAvatarUrl);
     }
 
-    private void setNameButton(View view) {
+    private void setNameButton() {
         if (nameButton != null && nameButton.equals(getResources().getString(R.string.button_add))) {
             button.setText(nameButton);
         } else {
@@ -104,10 +116,54 @@ public class EditUserFragment extends Fragment {
         }
     }
 
-    private void setEditTextView (View view) {
+    private void setEditTextView() {
         editTextFirstName.setText(firstName);
         editTextLastName.setText(lastName);
         editTextEmail.setText(email);
         editTextAvatarUrl.setText(avatar);
+    }
+
+    private void buttonBehavior() {
+        button.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.button_edit:
+                if (invalideData()) {
+                    //запись на сервер
+                } else {
+                    tmpEditText.requestFocus();
+
+                    String fieldValidFirst = getResources().getString(R.string.field_valid_first);
+                    String fieldValidLast = getResources().getString(R.string.field_valid_last);
+
+                    String field = fieldValidFirst + " " + tmpEditText.getHint().toString() + " "
+                            + fieldValidLast;
+                    Toast.makeText(getActivity(), field, Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    private boolean invalideData() {
+        boolean notNull = false;
+
+        try {
+            for (EditText item:editTextList
+                    ) {
+                if (item.getText().toString().length() != 0) {
+                    notNull = true;
+                } else {
+                    tmpEditText = item;
+                    notNull = false;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+          return notNull;
     }
 }
