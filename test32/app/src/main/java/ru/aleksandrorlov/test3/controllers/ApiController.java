@@ -34,4 +34,12 @@ public class ApiController {
 
         return retrofit.create(ApiUser.class);
     }
+
+    public static ApiUser setApi() {
+        Retrofit retrofit = new Retrofit.Builder().client(client)
+                .baseUrl(USER_BASE_URL)
+                .build();
+
+        return retrofit.create(ApiUser.class);
+    }
 }

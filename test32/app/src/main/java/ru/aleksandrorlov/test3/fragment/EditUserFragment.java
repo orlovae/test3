@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,16 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.aleksandrorlov.test3.R;
+import ru.aleksandrorlov.test3.controllers.ApiController;
 import ru.aleksandrorlov.test3.data.Contract;
+import ru.aleksandrorlov.test3.model.User;
+import ru.aleksandrorlov.test3.model.RequestBody;
+import ru.aleksandrorlov.test3.rest.ApiUser;
 
 import static ru.aleksandrorlov.test3.MainActivity.NAME_BUTTON;
 import static ru.aleksandrorlov.test3.fragment.ViewUsersFragment.SEND_USER;
@@ -49,7 +58,8 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
     }
 
     private void getData() {
-        String selection = Contract.User.COLUMN_ID_SERVER + " LIKE ?";;
+        String selection = Contract.User.COLUMN_ID_SERVER + " LIKE ?";
+        ;
         String[] selectionArgs = {"%" + idServer + "%"};
 
         Cursor data = getActivity().getContentResolver().query(Contract.User.CONTENT_URI, null,
@@ -79,7 +89,7 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = (View)inflater.inflate(R.layout.fragment_edit_user, container, false);
+        View view = (View) inflater.inflate(R.layout.fragment_edit_user, container, false);
 
         initViews(view);
 
@@ -93,11 +103,11 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initViews(View view) {
-        editTextFirstName = (EditText)view.findViewById(R.id.edit_text_first_name);
-        editTextLastName = (EditText)view.findViewById(R.id.edit_text_last_name);
-        editTextEmail = (EditText)view.findViewById(R.id.edit_text_email);
-        editTextAvatarUrl = (EditText)view.findViewById(R.id.edit_text_avatar_url);
-        button = (Button)view.findViewById(R.id.button_edit);
+        editTextFirstName = (EditText) view.findViewById(R.id.edit_text_first_name);
+        editTextLastName = (EditText) view.findViewById(R.id.edit_text_last_name);
+        editTextEmail = (EditText) view.findViewById(R.id.edit_text_email);
+        editTextAvatarUrl = (EditText) view.findViewById(R.id.edit_text_avatar_url);
+        button = (Button) view.findViewById(R.id.button_edit);
 
         setNameButton();
 
@@ -105,7 +115,8 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         editTextList.add(editTextFirstName);
         editTextList.add(editTextLastName);
         editTextList.add(editTextEmail);
-        editTextList.add(editTextAvatarUrl);
+        //Отключено, так как в т.з. нет проверки валидности поля url avatar
+        //editTextList.add(editTextAvatarUrl);
     }
 
     private void setNameButton() {
@@ -132,7 +143,7 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.button_edit:
                 if (invalideData()) {
-                    //запись на сервер
+                    addUserToServer(createUser());
                 } else {
                     tmpEditText.requestFocus();
 
@@ -151,7 +162,7 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         boolean notNull = false;
 
         try {
-            for (EditText item:editTextList
+            for (EditText item : editTextList
                     ) {
                 //удаляет пробелы, что бы пользователь не мог зарегестировать имя из одного пробела
                 if (item.getText().toString().replaceAll(" ", "").length() != 0) {
@@ -165,6 +176,34 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-          return notNull;
+        return notNull;
+    }
+
+    private void addUserToServer(RequestBody requestBody) {
+        ApiUser apiUser = ApiController.getApi();
+        Call<ResponseBody> call = apiUser.setUser(requestBody);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.d("response", response.toString());
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+    private RequestBody createUser() {
+        User user = new User(
+                editTextFirstName.getText().toString(),
+                editTextLastName.getText().toString(),
+                editTextEmail.getText().toString(),
+                editTextAvatarUrl.getText().toString()
+        );
+        return new RequestBody(user);
     }
 }
