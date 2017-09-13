@@ -180,18 +180,15 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
     }
 
     private void addUserToServer(RequestBody requestBody) {
-        ApiUser apiUser = ApiController.getApi();
+        ApiUser apiUser = ApiController.API();
         Call<ResponseBody> call = apiUser.setUser(requestBody);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.d("response", response.toString());
-
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
             }
         });
 

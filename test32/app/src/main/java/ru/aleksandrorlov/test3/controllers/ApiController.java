@@ -22,7 +22,7 @@ public class ApiController {
             (message -> Log.d("Retrofit", message)).setLevel(HttpLoggingInterceptor.Level.BODY);
     static OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor ).build();
 
-    public static ApiUser getApi() {
+    public static ApiUser API() {
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -30,14 +30,6 @@ public class ApiController {
         Retrofit retrofit = new Retrofit.Builder().client(client)
                 .baseUrl(USER_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        return retrofit.create(ApiUser.class);
-    }
-
-    public static ApiUser setApi() {
-        Retrofit retrofit = new Retrofit.Builder().client(client)
-                .baseUrl(USER_BASE_URL)
                 .build();
 
         return retrofit.create(ApiUser.class);

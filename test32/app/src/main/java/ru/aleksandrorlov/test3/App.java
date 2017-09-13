@@ -31,7 +31,7 @@ public class App extends Application {
     }
 
     private void init() {
-        apiUser = ApiController.getApi();
+        apiUser = ApiController.API();
         apiUser.getUsers().enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
