@@ -153,7 +153,8 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         try {
             for (EditText item:editTextList
                     ) {
-                if (item.getText().toString().length() != 0) {
+                //удаляет пробелы, что бы пользователь не мог зарегестировать имя из одного пробела
+                if (item.getText().toString().replaceAll(" ", "").length() != 0) {
                     notNull = true;
                 } else {
                     tmpEditText = item;
