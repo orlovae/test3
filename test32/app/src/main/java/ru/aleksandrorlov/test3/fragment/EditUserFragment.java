@@ -107,6 +107,11 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         editTextLastName = (EditText) view.findViewById(R.id.edit_text_last_name);
         editTextEmail = (EditText) view.findViewById(R.id.edit_text_email);
         editTextAvatarUrl = (EditText) view.findViewById(R.id.edit_text_avatar_url);
+
+        if (idServer != -1) {
+            editTextAvatarUrl.setVisibility(View.VISIBLE);
+        }
+
         button = (Button) view.findViewById(R.id.button_edit);
 
         setNameButton();
@@ -153,6 +158,11 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
                     String field = fieldValidFirst + " " + tmpEditText.getHint().toString() + " "
                             + fieldValidLast;
                     Toast.makeText(getActivity(), field, Toast.LENGTH_SHORT).show();
+
+                    if (!isEmailValid(editTextEmail.getText().toString())) {
+                        String emailNoValid = getResources().getString(R.string.email_no_valid);
+                        Toast.makeText(getActivity(), emailNoValid, Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
         }
@@ -165,7 +175,8 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
             for (EditText item : editTextList
                     ) {
                 //удаляет пробелы, что бы пользователь не мог зарегестировать имя из одного пробела
-                if (item.getText().toString().replaceAll(" ", "").length() != 0) {
+                if (item.getText().toString().replaceAll(" ", "").length() != 0 &
+                        isEmailValid(editTextEmail.getText().toString())) {
                     notNull = true;
                 } else {
                     tmpEditText = item;
@@ -177,6 +188,10 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         }
         return notNull;
+    }
+
+    boolean isEmailValid(CharSequence email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private void addUserToServer(RequestBody requestBody) {
