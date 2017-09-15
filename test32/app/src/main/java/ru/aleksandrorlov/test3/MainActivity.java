@@ -5,8 +5,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import ru.aleksandrorlov.test3.fragment.EditUserFragment;
 import ru.aleksandrorlov.test3.fragment.ViewUsersFragment;
@@ -24,12 +24,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fm = getSupportFragmentManager();
-        initFAB();
-        FABBehavior();
+        initViews();
+        FABBehavior(true);
         initFragment();
     }
-    private void initFAB() {
-        fab =  (FloatingActionButton)findViewById(R.id.fab);
+    private void initViews() {
+        fab = (FloatingActionButton)findViewById(R.id.fab);
     }
 
     private void initFragment() {
@@ -41,8 +41,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .commit();
     }
 
-    private void FABBehavior() {
+    public void FABBehavior(boolean isShow) {
         fab.setOnClickListener(this);
+        if (isShow) {
+            fab.show();
+        } else {
+            fab.hide();
+        }
     }
 
     @Override
@@ -56,9 +61,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 editUserFragment = new EditUserFragment();
                 editUserFragment.setArguments(arg);
                 fm.beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                         .replace(R.id.container, editUserFragment)
                         .addToBackStack(null)
                         .commit();
+                FABBehavior(false);
                 break;
         }
     }
