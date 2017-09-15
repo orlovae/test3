@@ -149,7 +149,11 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
             case R.id.button_edit:
                 if (invalideData()) {
                     if (isEmailValid(editTextEmail.getText().toString())) {
-                        addUserToServer(createUser());
+                        if (idServer != -1) {
+                            editUserToServer(createUser());
+                        } else {
+                            addUserToServer(createUser());
+                        }
                     } else {
                         editTextEmail.requestFocus();
 
@@ -191,6 +195,26 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
 
     boolean isEmailValid(CharSequence email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    private void editUserToServer(RequestBody requestBody) {
+        ApiUser apiUser = ApiController.API();
+        Call<ResponseBody> call = apiUser.editUser(idServer, requestBody);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    setToast(getResources().getString(R.string.user_edit));
+                }
+                Log.d("editUserToServer", response.message());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                setToast(getResources().getString(R.string.user_no_edit));
+            }
+        });
+
     }
 
     private void addUserToServer(RequestBody requestBody) {

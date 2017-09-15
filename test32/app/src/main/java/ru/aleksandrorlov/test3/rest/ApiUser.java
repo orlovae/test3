@@ -6,7 +6,9 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import ru.aleksandrorlov.test3.model.User;
 import ru.aleksandrorlov.test3.model.RequestBody;
 
@@ -20,4 +22,7 @@ public interface ApiUser {
 
     @POST("users.json")
     Call<ResponseBody> setUser(@Body RequestBody requestBody);
+
+    @PATCH("users/{id}.json")
+    Call<ResponseBody> editUser(@Path("id") int idServer, @Body RequestBody requestBody);
 }

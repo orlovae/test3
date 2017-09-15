@@ -12,7 +12,9 @@
     <string name="field_valid_last">it\'s empty</string>
     <string name="email_no_valid">email no valid</string>
     <string name="user_add">The user has been added</string>
+    <string name="user_edit">The user has been edit</string>
     <string name="user_no_add">The user is not added. The server is not available.</string>
+    <string name="user_no_edit">The user is not edit. The server is not available.</string>
     <!-- Fragment EditUserFragment end -->
 
 </resources>
