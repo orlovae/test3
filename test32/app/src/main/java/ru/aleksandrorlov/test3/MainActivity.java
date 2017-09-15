@@ -62,15 +62,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
-
-    @Override
-    public void onBackPressed() {
-        FragmentManager fm = getSupportFragmentManager();
-        if (fm.getBackStackEntryCount() > 0) {
-            fm.popBackStack();
-            Log.d("fm", fm.getBackStackEntryCount() + "");
-        }
-        else
-            finish();
-    }
 }

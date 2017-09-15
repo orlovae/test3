@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -83,9 +84,11 @@ public class ViewUsersFragment extends Fragment implements LoaderManager.LoaderC
                 arg.putInt(SEND_USER, idServer);
                 EditUserFragment editUserFragment = new EditUserFragment();
                 editUserFragment.setArguments(arg);
-                FragmentTransaction fT = getFragmentManager().beginTransaction();
-                fT.replace(R.id.container, editUserFragment);
-                fT.commit();
+                FragmentManager fM = getFragmentManager();
+                fM.beginTransaction()
+                        .replace(R.id.container, editUserFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
