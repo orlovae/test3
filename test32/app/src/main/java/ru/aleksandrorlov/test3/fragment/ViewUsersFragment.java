@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import ru.aleksandrorlov.test3.MainActivity;
 import ru.aleksandrorlov.test3.R;
 import ru.aleksandrorlov.test3.adapter.RecyclerViewAllUsersAdapter;
 import ru.aleksandrorlov.test3.data.Contract;
@@ -64,6 +65,14 @@ public class ViewUsersFragment extends Fragment implements LoaderManager.LoaderC
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() != null) {
+            ((MainActivity)getActivity()).FABShow(true);
+        }
+    }
+
     private void initViews(View view) {
         recyclerViewAllUsers = (RecyclerView)view.findViewById(R.id.recycler_view_all_users);
     }
@@ -89,6 +98,10 @@ public class ViewUsersFragment extends Fragment implements LoaderManager.LoaderC
                         .replace(R.id.container, editUserFragment)
                         .addToBackStack(null)
                         .commit();
+
+                if (getActivity() != null) {
+                    ((MainActivity)getActivity()).FABShow(false);
+                }
             }
         });
 
@@ -116,5 +129,4 @@ public class ViewUsersFragment extends Fragment implements LoaderManager.LoaderC
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.swapCursor(null);
     }
-
 }
