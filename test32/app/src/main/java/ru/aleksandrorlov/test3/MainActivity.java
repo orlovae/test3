@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import ru.aleksandrorlov.test3.fragment.EditUserFragment;
@@ -13,7 +14,7 @@ import ru.aleksandrorlov.test3.fragment.ViewUsersFragment;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private ViewUsersFragment viewUsersFragment;
     private EditUserFragment editUserFragment;
-    private FragmentTransaction fT;
+    private FragmentManager fm;
     private FloatingActionButton fab;
 
     public static final String NAME_BUTTON = "nameButton";
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        fm = getSupportFragmentManager();
         initFAB();
         FABBehavior();
         initFragment();
@@ -34,10 +35,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initFragment() {
         viewUsersFragment = new ViewUsersFragment();
 
-
-        fT = getSupportFragmentManager().beginTransaction();
-        fT.add(R.id.container, viewUsersFragment);
-        fT.commit();
+        fm.beginTransaction()
+                .add(R.id.container, viewUsersFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     private void FABBehavior() {
@@ -54,10 +55,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 editUserFragment = new EditUserFragment();
                 editUserFragment.setArguments(arg);
-                fT = getSupportFragmentManager().beginTransaction();
-                fT.replace(R.id.container, editUserFragment);
-                fT.commit();
+                fm.beginTransaction()
+                        .replace(R.id.container, editUserFragment)
+                        .addToBackStack(null)
+                        .commit();
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fm = getSupportFragmentManager();
+        if (fm.getBackStackEntryCount() > 0) {
+            fm.popBackStack();
+            Log.d("fm", fm.getBackStackEntryCount() + "");
+        }
+        else
+            finish();
     }
 }
