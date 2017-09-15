@@ -148,21 +148,20 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.button_edit:
                 if (invalideData()) {
-                    addUserToServer(createUser());
+                    if (isEmailValid(editTextEmail.getText().toString())) {
+                        addUserToServer(createUser());
+                    } else {
+                        editTextEmail.requestFocus();
+
+                        setToast(getResources().getString(R.string.email_no_valid));
+                    }
+
                 } else {
                     tmpEditText.requestFocus();
 
-                    String fieldValidFirst = getResources().getString(R.string.field_valid_first);
-                    String fieldValidLast = getResources().getString(R.string.field_valid_last);
-
-                    String field = fieldValidFirst + " " + tmpEditText.getHint().toString() + " "
-                            + fieldValidLast;
-                    Toast.makeText(getActivity(), field, Toast.LENGTH_SHORT).show();
-
-                    if (!isEmailValid(editTextEmail.getText().toString())) {
-                        String emailNoValid = getResources().getString(R.string.email_no_valid);
-                        Toast.makeText(getActivity(), emailNoValid, Toast.LENGTH_SHORT).show();
-                    }
+                    setToast(getResources().getString(R.string.field_valid_first) + " "
+                            + tmpEditText.getHint().toString() + " "
+                            + getResources().getString(R.string.field_valid_last));
                 }
                 break;
         }
@@ -174,9 +173,9 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         try {
             for (EditText item : editTextList
                     ) {
+                boolean isItem = item.getText().toString().replaceAll(" ", "").length() != 0;
                 //удаляет пробелы, что бы пользователь не мог зарегестировать имя из одного пробела
-                if (item.getText().toString().replaceAll(" ", "").length() != 0 &
-                        isEmailValid(editTextEmail.getText().toString())) {
+                if (isItem) {
                     notNull = true;
                 } else {
                     tmpEditText = item;
@@ -200,10 +199,15 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    setToast(getResources().getString(R.string.user_add));
+                }
+                Log.d("addUserToServer", response.message());
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                setToast(getResources().getString(R.string.user_no_add));
             }
         });
 
@@ -217,5 +221,9 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
                 editTextAvatarUrl.getText().toString()
         );
         return new RequestBody(user);
+    }
+
+    private void setToast(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 }
