@@ -20,11 +20,12 @@ public class EditUserActivity extends FragmentActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("EditUserActivity", "onCreate");
 
-        if (getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE) {
-            finish();
-            return;
+        if (savedInstanceState != null) {
+            Log.d("EditUserActivity", "savedInstanceState = " + savedInstanceState.toString());
+        } else {
+            Log.d("EditUserActivity", "savedInstanceState = null ");
         }
 
         if (savedInstanceState == null) {
@@ -35,6 +36,14 @@ public class EditUserActivity extends FragmentActivity {
                     .beginTransaction()
                     .add(android.R.id.content, editUserFragment)
                     .commit();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            finish();
         }
     }
 }
