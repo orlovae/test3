@@ -5,8 +5,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -19,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import ru.aleksandrorlov.test3.MainActivity;
 import ru.aleksandrorlov.test3.R;
 import ru.aleksandrorlov.test3.adapter.RecyclerViewAllUsersAdapter;
 import ru.aleksandrorlov.test3.data.Contract;
@@ -73,14 +70,6 @@ public class ViewUsersFragment extends Fragment implements LoaderManager.LoaderC
         listener = (RecyclerViewAllUsersAdapter.OnItemClickListener) getActivity();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (getActivity() != null) {
-            ((MainActivity)getActivity()).FABShow(true);
-        }
-    }
-
     private void initViews(View view) {
         recyclerViewAllUsers = (RecyclerView)view.findViewById(R.id.recycler_view_all_users);
     }
@@ -98,9 +87,6 @@ public class ViewUsersFragment extends Fragment implements LoaderManager.LoaderC
             @Override
             public void onItemClick(int idServer) {
                 listener.onItemClick(idServer);
-                if (getActivity() != null) {
-                    ((MainActivity)getActivity()).FABShow(false);
-                }
             }
         });
 

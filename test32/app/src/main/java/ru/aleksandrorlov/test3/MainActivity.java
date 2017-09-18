@@ -1,27 +1,20 @@
 package ru.aleksandrorlov.test3;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import ru.aleksandrorlov.test3.adapter.RecyclerViewAllUsersAdapter;
 import ru.aleksandrorlov.test3.fragment.EditUserFragment;
-import ru.aleksandrorlov.test3.fragment.ViewUsersFragment;
 
 import static ru.aleksandrorlov.test3.fragment.ViewUsersFragment.SEND_USER;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener,
         RecyclerViewAllUsersAdapter.OnItemClickListener {
-    private ViewUsersFragment viewUsersFragment;
-    private EditUserFragment editUserFragment;
-    private FragmentManager fm;
     private FloatingActionButton fab;
-    private RecyclerViewAllUsersAdapter.OnItemClickListener listener;
 
     private String nameButton;
     private int idServer = -1;
@@ -34,8 +27,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fm = getSupportFragmentManager();
-
         initFAB();
 
         FABBehavior();
@@ -43,7 +34,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         if (savedInstanceState != null) {
             idServer = savedInstanceState.getInt(SEND_USER);
             nameButton = savedInstanceState.getString(NAME_BUTTON);
-
         }
 
         withEditUser = (findViewById(R.id.container) != null);
@@ -70,8 +60,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             intent.putExtra(SEND_USER, idServer);
             intent.putExtra(NAME_BUTTON, nameButton);
             startActivity(intent);
-            Log.d("MainActivity", "intent " + intent.toString());
-            Log.d("MainActivity", "end showEditUser");
         }
     }
 
@@ -94,26 +82,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fab:
-
-                Bundle arg = new Bundle();
-                arg.putString(NAME_BUTTON, getResources().getString(R.string.button_add));
-
-                editUserFragment = new EditUserFragment();
-                editUserFragment.setArguments(arg);
-                fm.beginTransaction()
-                        .replace(R.id.container, editUserFragment)
-                        .addToBackStack(null)
-                        .commit();
-                FABShow(false);
+                showEditUser(-1, getResources().getString(R.string.button_add));
                 break;
-        }
-    }
-
-    public void FABShow(boolean isShow) {
-        if (isShow) {
-            fab.show();
-        } else {
-            fab.hide();
         }
     }
 
