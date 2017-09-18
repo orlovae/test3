@@ -1,5 +1,6 @@
 package ru.aleksandrorlov.test3.fragment;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -30,6 +31,7 @@ import ru.aleksandrorlov.test3.data.Contract;
 public class ViewUsersFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private RecyclerView recyclerViewAllUsers;
     private RecyclerViewAllUsersAdapter adapter;
+    private RecyclerViewAllUsersAdapter.OnItemClickListener listener;
     private int height, width;
 
     private int LOADER_ID = 2;
@@ -66,6 +68,12 @@ public class ViewUsersFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        listener = (RecyclerViewAllUsersAdapter.OnItemClickListener) getActivity();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         if (getActivity() != null) {
@@ -89,16 +97,7 @@ public class ViewUsersFragment extends Fragment implements LoaderManager.LoaderC
         adapter.SetOnItemClickListener(new RecyclerViewAllUsersAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int idServer) {
-                Bundle arg = new Bundle();
-                arg.putInt(SEND_USER, idServer);
-                EditUserFragment editUserFragment = new EditUserFragment();
-                editUserFragment.setArguments(arg);
-                FragmentManager fM = getFragmentManager();
-                fM.beginTransaction()
-                        .replace(R.id.container, editUserFragment)
-                        .addToBackStack(null)
-                        .commit();
-
+                listener.onItemClick(idServer);
                 if (getActivity() != null) {
                     ((MainActivity)getActivity()).FABShow(false);
                 }

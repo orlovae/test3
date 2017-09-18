@@ -30,7 +30,7 @@ public class RecyclerViewAllUsersAdapter extends RecyclerView.Adapter<RecyclerVi
     private Context context;
     private Cursor dataCursor;
     private int width, height;
-    OnItemClickListener mItemClickListener;
+    private OnItemClickListener mItemClickListener;
 
     private final float COMPRESSION_PICTURE = 0.2f;
 

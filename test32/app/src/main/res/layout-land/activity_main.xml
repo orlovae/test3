@@ -7,11 +7,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="ru.aleksandrorlov.test3.MainActivity">
 
-    <fragment
-        android:id="@+id/fragment_view_user"
-        android:name="ru.aleksandrorlov.test3.fragment.ViewUsersFragment"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <fragment
+            android:id="@+id/fragment_view_user"
+            android:name="ru.aleksandrorlov.test3.fragment.ViewUsersFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

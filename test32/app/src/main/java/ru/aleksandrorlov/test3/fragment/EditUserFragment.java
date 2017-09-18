@@ -45,11 +45,28 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
     private List<EditText> editTextList;
     private EditText tmpEditText;
 
+    public static EditUserFragment newInstanse(int idServer, String nameButton) {
+        EditUserFragment editUserFragment = new EditUserFragment();
+        Bundle args = new Bundle();
+        args.putInt(SEND_USER, idServer);
+        args.putString(NAME_BUTTON, nameButton);
+        editUserFragment.setArguments(args);
+        return editUserFragment;
+    }
+
+    public int getIdServer() {
+        return getArguments().getInt(SEND_USER, -1);
+    }
+
+    public String getNameButton() {
+        return getArguments().getString(NAME_BUTTON);
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        nameButton = getArguments().getString(NAME_BUTTON);
+        nameButton = getNameButton();
+        idServer = getIdServer();
 
-        idServer = getArguments().getInt(SEND_USER, -1);
         if (idServer != -1) {
             getData();
         }
@@ -59,7 +76,7 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
 
     private void getData() {
         String selection = Contract.User.COLUMN_ID_SERVER + " LIKE ?";
-        ;
+
         String[] selectionArgs = {"%" + idServer + "%"};
 
         Cursor data = getActivity().getContentResolver().query(Contract.User.CONTENT_URI, null,

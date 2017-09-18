@@ -21,6 +21,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".EditUserActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
 
         <provider
             android:name=".contentprovider.DataBaseProvider"
