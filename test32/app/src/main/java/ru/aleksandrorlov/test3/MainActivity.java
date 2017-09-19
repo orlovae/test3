@@ -16,7 +16,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         RecyclerViewAllUsersAdapter.OnItemClickListener {
     private FloatingActionButton fab;
 
-    private String nameButton;
     private int idServer = -1;
     boolean withEditUser = true;
 
@@ -44,7 +43,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void showEditUser(int idServer) {
-        Log.d("MainActivity", "withEditUser = " + withEditUser);
         if (withEditUser) {
             EditUserFragment editUserFragment = (EditUserFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.container);
@@ -56,6 +54,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         .commit();
             }
         } else {
+            Log.d("MainActivity", "showEditUser | start EditUserActivity");
             Intent intent = new Intent(this, EditUserActivity.class);
             intent.putExtra(SEND_USER, idServer);
             startActivity(intent);
@@ -67,6 +66,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         super.onSaveInstanceState(outState);
         outState.putInt(SEND_USER, idServer);
     }
+
 
     private void initFAB() {
         fab =  (FloatingActionButton)findViewById(R.id.fab);
@@ -80,7 +80,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fab:
-                showEditUser(EDIT_BUTTON);
+                idServer = EDIT_BUTTON;
+                showEditUser(idServer);
                 break;
         }
     }
@@ -90,6 +91,5 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         this.idServer = idServer;
 
         showEditUser(idServer);
-        Log.d("MainActivity", "idServer = " + idServer);
     }
 }

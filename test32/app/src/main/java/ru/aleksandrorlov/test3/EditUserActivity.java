@@ -25,6 +25,7 @@ public class EditUserActivity extends FragmentActivity {
         if (savedInstanceState == null) {
             EditUserFragment editUserFragment = EditUserFragment.newInstanse(
                     getIntent().getIntExtra(SEND_USER, -1));
+            Log.d("EditUserActivity", "id Server = " +getIntent().getIntExtra(SEND_USER, -1));
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(android.R.id.content, editUserFragment)

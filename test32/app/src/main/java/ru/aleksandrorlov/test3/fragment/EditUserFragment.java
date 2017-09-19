@@ -255,4 +255,10 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
     private void setToast(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("EditUserFragment", "onResume");
+    }
 }
