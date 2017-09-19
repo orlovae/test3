@@ -21,6 +21,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     boolean withEditUser = true;
 
     public static final String NAME_BUTTON = "nameButton";
+    public static final int EDIT_BUTTON = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,23 +34,22 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         if (savedInstanceState != null) {
             idServer = savedInstanceState.getInt(SEND_USER);
-            nameButton = savedInstanceState.getString(NAME_BUTTON);
         }
 
         withEditUser = (findViewById(R.id.container) != null);
 
         if (withEditUser) {
-            showEditUser(idServer, nameButton);
+            showEditUser(idServer);
         }
     }
 
-    private void showEditUser(int idServer, String nameButton) {
+    private void showEditUser(int idServer) {
         Log.d("MainActivity", "withEditUser = " + withEditUser);
         if (withEditUser) {
             EditUserFragment editUserFragment = (EditUserFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.container);
             if (editUserFragment == null || editUserFragment.getIdServer() != idServer) {
-                editUserFragment = EditUserFragment.newInstanse(idServer, nameButton);
+                editUserFragment = EditUserFragment.newInstanse(idServer);
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.container, editUserFragment)
@@ -58,7 +58,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         } else {
             Intent intent = new Intent(this, EditUserActivity.class);
             intent.putExtra(SEND_USER, idServer);
-            intent.putExtra(NAME_BUTTON, nameButton);
             startActivity(intent);
         }
     }
@@ -67,7 +66,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(SEND_USER, idServer);
-        outState.putString(NAME_BUTTON, nameButton);
     }
 
     private void initFAB() {
@@ -82,7 +80,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fab:
-                showEditUser(-1, getResources().getString(R.string.button_add));
+                showEditUser(EDIT_BUTTON);
                 break;
         }
     }
@@ -91,7 +89,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onItemClick(int idServer) {
         this.idServer = idServer;
 
-        showEditUser(idServer, getResources().getString(R.string.button_edit));
+        showEditUser(idServer);
         Log.d("MainActivity", "idServer = " + idServer);
     }
 }

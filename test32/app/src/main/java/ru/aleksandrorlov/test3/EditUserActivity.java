@@ -22,16 +22,9 @@ public class EditUserActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         Log.d("EditUserActivity", "onCreate");
 
-        if (savedInstanceState != null) {
-            Log.d("EditUserActivity", "savedInstanceState = " + savedInstanceState.toString());
-        } else {
-            Log.d("EditUserActivity", "savedInstanceState = null ");
-        }
-
         if (savedInstanceState == null) {
             EditUserFragment editUserFragment = EditUserFragment.newInstanse(
-                    getIntent().getIntExtra(SEND_USER, -1),
-                    getIntent().getStringExtra(NAME_BUTTON));
+                    getIntent().getIntExtra(SEND_USER, -1));
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(android.R.id.content, editUserFragment)

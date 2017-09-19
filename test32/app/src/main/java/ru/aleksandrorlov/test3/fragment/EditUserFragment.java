@@ -1,5 +1,6 @@
 package ru.aleksandrorlov.test3.fragment;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,7 +27,6 @@ import ru.aleksandrorlov.test3.model.User;
 import ru.aleksandrorlov.test3.model.RequestBody;
 import ru.aleksandrorlov.test3.rest.ApiUser;
 
-import static ru.aleksandrorlov.test3.MainActivity.NAME_BUTTON;
 import static ru.aleksandrorlov.test3.fragment.ViewUsersFragment.SEND_USER;
 
 /**
@@ -45,11 +45,10 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
     private List<EditText> editTextList;
     private EditText tmpEditText;
 
-    public static EditUserFragment newInstanse(int idServer, String nameButton) {
+    public static EditUserFragment newInstanse(int idServer) {
         EditUserFragment editUserFragment = new EditUserFragment();
         Bundle args = new Bundle();
         args.putInt(SEND_USER, idServer);
-        args.putString(NAME_BUTTON, nameButton);
         editUserFragment.setArguments(args);
         return editUserFragment;
     }
@@ -58,19 +57,17 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         return getArguments().getInt(SEND_USER, -1);
     }
 
-    public String getNameButton() {
-        return getArguments().getString(NAME_BUTTON);
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        nameButton = getNameButton();
         idServer = getIdServer();
+        Log.d("EditUserFragment onCreate", "idServer = " + idServer);
 
         if (idServer != -1) {
             getData();
+            nameButton = getResources().getString(R.string.button_edit);
+        } else {
+            nameButton = getResources().getString(R.string.button_add);
         }
-
         super.onCreate(savedInstanceState);
     }
 
@@ -111,7 +108,7 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         initViews(view);
 
         if (idServer != -1) {
-            setEditTextView();
+            setView();
         }
 
         buttonBehavior();
@@ -130,8 +127,7 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         }
 
         button = (Button) view.findViewById(R.id.button_edit);
-
-        setNameButton();
+        button.setText(nameButton);
 
         editTextList = new ArrayList<EditText>();
         editTextList.add(editTextFirstName);
@@ -141,15 +137,7 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         //editTextList.add(editTextAvatarUrl);
     }
 
-    private void setNameButton() {
-        if (nameButton != null && nameButton.equals(getResources().getString(R.string.button_add))) {
-            button.setText(nameButton);
-        } else {
-            button.setText(getResources().getString(R.string.button_edit));
-        }
-    }
-
-    private void setEditTextView() {
+    private void setView() {
         editTextFirstName.setText(firstName);
         editTextLastName.setText(lastName);
         editTextEmail.setText(email);
