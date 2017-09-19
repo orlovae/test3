@@ -36,7 +36,11 @@ public class EditUserActivity extends FragmentActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+        boolean isLarge = (newConfig.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >=
+                Configuration.SCREENLAYOUT_SIZE_NORMAL;
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE && isLarge) {
             finish();
         }
     }
