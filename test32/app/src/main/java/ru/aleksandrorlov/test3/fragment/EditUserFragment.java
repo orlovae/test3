@@ -1,11 +1,9 @@
 package ru.aleksandrorlov.test3.fragment;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +58,6 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         idServer = getIdServer();
-        Log.d("EditUserFragment onCreate", "idServer = " + idServer);
 
         if (idServer != -1) {
             getData();
@@ -211,15 +208,12 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
                 if (response.isSuccessful()) {
                     setToast(getResources().getString(R.string.user_edit));
                 }
-                Log.d("editUserToServer", response.message());
             }
-
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 setToast(getResources().getString(R.string.user_no_edit));
             }
         });
-
     }
 
     private void addUserToServer(RequestBody requestBody) {
@@ -231,15 +225,12 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
                 if (response.isSuccessful()) {
                     setToast(getResources().getString(R.string.user_add));
                 }
-                Log.d("addUserToServer", response.message());
             }
-
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 setToast(getResources().getString(R.string.user_no_add));
             }
         });
-
     }
 
     private RequestBody createUser() {
@@ -254,11 +245,5 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
 
     private void setToast(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("EditUserFragment", "onResume");
     }
 }

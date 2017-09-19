@@ -12,7 +12,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,7 +88,6 @@ public class ViewUsersFragment extends Fragment implements LoaderManager.LoaderC
                 listener.onItemClick(idServer);
             }
         });
-
     }
 
     @Override
@@ -100,7 +98,6 @@ public class ViewUsersFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
         return new CursorLoader(getActivity(),
                 Contract.User.CONTENT_URI, null, null, null, null);
     }

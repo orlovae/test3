@@ -1,15 +1,10 @@
 package ru.aleksandrorlov.test3.adapter;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -26,7 +21,8 @@ import ru.aleksandrorlov.test3.data.Contract;
  * Created by alex on 06.09.17.
  */
 
-public class RecyclerViewAllUsersAdapter extends RecyclerView.Adapter<RecyclerViewAllUsersAdapter.ViewHolder>{
+public class RecyclerViewAllUsersAdapter extends RecyclerView.Adapter<RecyclerViewAllUsersAdapter.
+        ViewHolder> {
     private Context context;
     private Cursor dataCursor;
     private int width, height;
@@ -70,13 +66,11 @@ public class RecyclerViewAllUsersAdapter extends RecyclerView.Adapter<RecyclerVi
         int emailColIndex = dataCursor.getColumnIndex(Contract.User.COLUMN_EMAIL);
         int avatarPathColIndex = dataCursor.getColumnIndex(Contract.User.COLUMN_AVATAR_PATH);
 
-        int idServer = dataCursor.getInt(idServerColIndex);
-
+        final int idServer = dataCursor.getInt(idServerColIndex);
         String firstNameFromCursor = dataCursor.getString(firstNameColIndex);
         String lastNameFromCursor = dataCursor.getString(lastNameColIndex);
         String emailFromCursor = dataCursor.getString(emailColIndex);
         String avatarPath = dataCursor.getString(avatarPathColIndex);
-
 
         Uri imageUri = null;
         if (avatarPath != null) {

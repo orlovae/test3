@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import ru.aleksandrorlov.test3.adapter.RecyclerViewAllUsersAdapter;
@@ -54,7 +53,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         .commit();
             }
         } else {
-            Log.d("MainActivity", "showEditUser | start EditUserActivity");
             Intent intent = new Intent(this, EditUserActivity.class);
             intent.putExtra(SEND_USER, idServer);
             startActivity(intent);
@@ -66,7 +64,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         super.onSaveInstanceState(outState);
         outState.putInt(SEND_USER, idServer);
     }
-
 
     private void initFAB() {
         fab =  (FloatingActionButton)findViewById(R.id.fab);
@@ -89,7 +86,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onItemClick(int idServer) {
         this.idServer = idServer;
-
         showEditUser(idServer);
     }
 }

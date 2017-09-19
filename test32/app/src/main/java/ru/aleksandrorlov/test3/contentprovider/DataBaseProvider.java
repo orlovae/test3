@@ -95,7 +95,6 @@ public class DataBaseProvider extends ContentProvider {
     @Override
     public String getType(@NonNull Uri uri) {
         switch (uriMatcher.match(uri)) {
-
             case URI_MATCHER_USER_ALL_ROWS:
                 return TYPE_USER_ALL_ROW;
             case URI_MATCHER_USER_SINGLE_ROW:
@@ -136,7 +135,8 @@ public class DataBaseProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, @Nullable String selection,
+                      @Nullable String[] selectionArgs) {
         String rowIdUser;
         int countRowsDelete = -1;
         String table_name = "";

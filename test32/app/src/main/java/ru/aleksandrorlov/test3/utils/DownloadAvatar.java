@@ -75,9 +75,9 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
 
                     typeImage = options.outMimeType;
 
+                    //Захардкорил, т.к. не опеделился, какого размера должны быть аватары на экране.
                     options.inSampleSize = calculateInSampleSize(options, 400, 800);
                     options.inJustDecodeBounds = false;
-//                    options.inPreferredConfig = Bitmap.Config.RGB_565;
 
                     InputStream iS = new URL(url).openStream();
                     bitmap = BitmapFactory.decodeStream(iS, null, options);
@@ -138,7 +138,6 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
             context.getContentResolver().update(uri, cv, null, null);
             cv.clear();
         }
-        Log.d("DownloadAvatar", "stop onPostExecute");
     }
 
     private boolean isExternalStorageWritable() {
@@ -185,22 +184,8 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
         return file;
     }
 
-//    private String getTypeImage(File path) {
-//        try {
-//            /**3 - количество символов в расширении файла**/
-//            int startSubstring = path.getAbsolutePath().toString().length() - 3;
-//            int endSubstring = path.getAbsolutePath().toString().length();
-//            return path.getAbsolutePath().toString().substring(startSubstring, endSubstring);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
-
     private int calculateInSampleSize(BitmapFactory.Options options,
                                             int reqWidth, int reqHeight) {
-        // Реальные размеры изображения
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
@@ -210,11 +195,8 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
             final int heightRatio = Math.round((float) height / (float) reqHeight);
             final int widthRatio = Math.round((float) width / (float) reqWidth);
 
-            // Вычисляем наибольший inSampleSize, который будет кратным двум
-            // и оставит полученные размеры больше, чем требуемые
             inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
         }
-
         return inSampleSize;
     }
 }
