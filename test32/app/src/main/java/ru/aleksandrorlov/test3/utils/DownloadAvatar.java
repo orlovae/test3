@@ -76,7 +76,7 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
                     typeImage = options.outMimeType;
 
                     //Захардкорил, т.к. не опеделился, какого размера должны быть аватары на экране.
-                    options.inSampleSize = calculateInSampleSize(options, 400, 800);
+                    options.inSampleSize = calculateInSampleSize(options, 100, 200);
                     options.inJustDecodeBounds = false;
 
                     InputStream iS = new URL(url).openStream();
