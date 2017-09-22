@@ -20,8 +20,6 @@ import ru.aleksandrorlov.test3.model.User;
 import ru.aleksandrorlov.test3.rest.ApiUser;
 import ru.aleksandrorlov.test3.utils.DownloadAvatar;
 
-import static ru.aleksandrorlov.test3.model.User.COMPARE_BY_COUNT;
-
 /**
  * Created by alex on 05.09.17.
  */
@@ -70,10 +68,9 @@ public class App extends Application {
 
         CursorAdapter cursorAdapter = new CursorAdapter();
         List<User> usersFromCursor = cursorAdapter.getListToCursor(cursor);
-        Collections.sort(users, COMPARE_BY_COUNT);
-        Collections.sort(usersFromCursor, COMPARE_BY_COUNT);
 
-        if (!users.equals(usersFromCursor)){
+
+        if (!users.removeAll(usersFromCursor)){
             getContentResolver().delete(Contract.User.CONTENT_URI, null, null);
             createNewUserTable(users);
         }
