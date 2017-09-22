@@ -31,7 +31,7 @@ public class CursorAdapter {
                 int emailCollIndex = cursor.getColumnIndex(Contract.User.COLUMN_EMAIL);
                 int avatarURLColIndex = cursor.getColumnIndex(Contract.User.COLUMN_AVATAR_URL);
                 int createAtColIndex = cursor.getColumnIndex(Contract.User.COLUMN_CREATE_AT);
-                int updateAtColIndex = cursor.getColumnIndex(Contract.User.COLUMN_AVATAR_URL);
+                int updateAtColIndex = cursor.getColumnIndex(Contract.User.COLUMN_UPDATE_AT);
 
                 do {
                     int idServerFromCursor = cursor.getInt(idServerColIndex);

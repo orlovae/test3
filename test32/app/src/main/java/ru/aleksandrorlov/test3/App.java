@@ -3,7 +3,10 @@ package ru.aleksandrorlov.test3;
 import android.app.Application;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -16,6 +19,8 @@ import ru.aleksandrorlov.test3.data.Contract;
 import ru.aleksandrorlov.test3.model.User;
 import ru.aleksandrorlov.test3.rest.ApiUser;
 import ru.aleksandrorlov.test3.utils.DownloadAvatar;
+
+import static ru.aleksandrorlov.test3.model.User.COMPARE_BY_COUNT;
 
 /**
  * Created by alex on 05.09.17.
@@ -54,6 +59,7 @@ public class App extends Application {
     }
 
     public void checkDataBase (List<User> users){
+        Log.d("App","checkDataBase start");
         String[] projection = {Contract.User.COLUMN_ID_SERVER, Contract.User.COLUMN_FIRST_NAME,
                                Contract.User.COLUMN_LAST_NAME, Contract.User.COLUMN_EMAIL,
                                Contract.User.COLUMN_AVATAR_URL, Contract.User.COLUMN_CREATE_AT,
@@ -64,6 +70,8 @@ public class App extends Application {
 
         CursorAdapter cursorAdapter = new CursorAdapter();
         List<User> usersFromCursor = cursorAdapter.getListToCursor(cursor);
+        Collections.sort(users, COMPARE_BY_COUNT);
+        Collections.sort(usersFromCursor, COMPARE_BY_COUNT);
 
         if (!users.equals(usersFromCursor)){
             getContentResolver().delete(Contract.User.CONTENT_URI, null, null);
@@ -72,9 +80,11 @@ public class App extends Application {
         if (cursor != null) {
             cursor.close();
         }
+        Log.d("App","checkDataBase end");
     }
 
     private void createNewUserTable(List<User> users){
+        Log.d("App","createNewUserTable start");
         for (User item:users
                 ) {
             ContentValues cv = new ContentValues();
@@ -88,6 +98,7 @@ public class App extends Application {
             getContentResolver().insert(Contract.User.CONTENT_URI, cv);
         }
         downloadAvatar();
+        Log.d("App","createNewUserTable end");
     }
 
     private void downloadAvatar() {

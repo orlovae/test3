@@ -6,6 +6,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Comparator;
+
 /**
  * Created by alex on 05.09.17.
  */
@@ -118,7 +120,15 @@ public class User {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(id).append(firstName).append(lastName).append(email).append(avatarUrl).append(createdAt).append(updatedAt).toHashCode();
+        return new HashCodeBuilder()
+                .append(id)
+                .append(firstName)
+                .append(lastName)
+                .append(email)
+                .append(avatarUrl)
+                .append(createdAt)
+                .append(updatedAt)
+                .toHashCode();
     }
 
     @Override
@@ -130,6 +140,21 @@ public class User {
             return false;
         }
         User rhs = ((User) other);
-        return new EqualsBuilder().append(id, rhs.id).append(firstName, rhs.firstName).append(lastName, rhs.lastName).append(email, rhs.email).append(avatarUrl, rhs.avatarUrl).append(createdAt, rhs.createdAt).append(updatedAt, rhs.updatedAt).isEquals();
+        return new EqualsBuilder()
+                .append(id, rhs.id)
+                .append(firstName, rhs.firstName)
+                .append(lastName, rhs.lastName)
+                .append(email, rhs.email)
+                .append(avatarUrl, rhs.avatarUrl)
+                .append(createdAt, rhs.createdAt)
+                .append(updatedAt, rhs.updatedAt)
+                .isEquals();
     }
+
+    public static final Comparator<User> COMPARE_BY_COUNT = new Comparator<User>() {
+        @Override
+        public int compare(User lhs, User rhs) {
+            return lhs.getId() - rhs.getId();
+        }
+    };
 }
