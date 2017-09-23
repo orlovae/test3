@@ -1,4 +1,4 @@
-package ru.aleksandrorlov.test3;
+package ru.aleksandrorlov.test3.activity;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

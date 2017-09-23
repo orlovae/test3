@@ -1,4 +1,4 @@
-package ru.aleksandrorlov.test3;
+package ru.aleksandrorlov.test3.activity;
 
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import ru.aleksandrorlov.test3.R;
 import ru.aleksandrorlov.test3.adapter.RecyclerViewAllUsersAdapter;
 import ru.aleksandrorlov.test3.fragment.EditUserFragment;
 

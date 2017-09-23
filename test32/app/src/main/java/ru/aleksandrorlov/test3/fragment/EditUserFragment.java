@@ -1,5 +1,6 @@
 package ru.aleksandrorlov.test3.fragment;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,6 +24,9 @@ import ru.aleksandrorlov.test3.controllers.ApiController;
 import ru.aleksandrorlov.test3.data.Contract;
 import ru.aleksandrorlov.test3.model.User;
 import ru.aleksandrorlov.test3.model.RequestBody;
+import ru.aleksandrorlov.test3.presenter.IBasePresenter;
+import ru.aleksandrorlov.test3.presenter.edituserfragment.IEditUser;
+import ru.aleksandrorlov.test3.presenter.edituserfragment.PresenterEditUserImpl;
 import ru.aleksandrorlov.test3.rest.ApiUser;
 
 import static ru.aleksandrorlov.test3.fragment.ViewUsersFragment.SEND_USER;
@@ -31,17 +35,22 @@ import static ru.aleksandrorlov.test3.fragment.ViewUsersFragment.SEND_USER;
  * Created by alex on 06.09.17.
  */
 
-public class EditUserFragment extends Fragment implements View.OnClickListener {
+public class EditUserFragment extends Fragment implements View.OnClickListener, IEditUserView {
+    private final String LOG_TAG = this.getClass().getSimpleName();
+
     private EditText editTextFirstName, editTextLastName, editTextEmail, editTextAvatarUrl;
     private Button button;
 
     private String nameButton;
     private int idServer;
 
+    private User user;
     private String firstName, lastName, email, avatar;
 
     private List<EditText> editTextList;
     private EditText tmpEditText;
+
+    private IEditUser presenter;
 
     public static EditUserFragment newInstanse(int idServer) {
         EditUserFragment editUserFragment = new EditUserFragment();
@@ -56,45 +65,26 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        presenter = new PresenterEditUserImpl(this, context);
+
+    }
+
+    @Override
+    public void setNameButton(String nameButton) {
+        this.nameButton = nameButton;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         idServer = getIdServer();
 
-        if (idServer != -1) {
-            getData();
-            nameButton = getResources().getString(R.string.button_edit);
-        } else {
-            nameButton = getResources().getString(R.string.button_add);
-        }
+        presenter.setIdServer(idServer);
+
+        user = presenter.getData(idServer);
+
         super.onCreate(savedInstanceState);
-    }
-
-    private void getData() {
-        String selection = Contract.User.COLUMN_ID_SERVER + " LIKE ?";
-
-        String[] selectionArgs = {"%" + idServer + "%"};
-
-        Cursor data = getActivity().getContentResolver().query(Contract.User.CONTENT_URI, null,
-                selection, selectionArgs, null);
-
-        try {
-            if (data != null && data.moveToFirst()) {
-                int firstNameColIndex = data.getColumnIndex(Contract.User.COLUMN_FIRST_NAME);
-                int lastNameColIndex = data.getColumnIndex(Contract.User.COLUMN_LAST_NAME);
-                int emailCollIndex = data.getColumnIndex(Contract.User.COLUMN_EMAIL);
-                int avatarURLColIndex = data.getColumnIndex(Contract.User.COLUMN_AVATAR_URL);
-
-                do {
-                    firstName = data.getString(firstNameColIndex);
-                    lastName = data.getString(lastNameColIndex);
-                    email = data.getString(emailCollIndex);
-                    avatar = data.getString(avatarURLColIndex);
-                } while (data.moveToNext());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (data != null) data.close();
-        }
     }
 
     @Nullable
@@ -135,10 +125,10 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setView() {
-        editTextFirstName.setText(firstName);
-        editTextLastName.setText(lastName);
-        editTextEmail.setText(email);
-        editTextAvatarUrl.setText(avatar);
+        editTextFirstName.setText(user.getFirstName());
+        editTextLastName.setText(user.getLastName());
+        editTextEmail.setText(user.getEmail());
+        editTextAvatarUrl.setText(user.getAvatarUrl());
     }
 
     private void buttonBehavior() {
@@ -246,4 +236,5 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
     private void setToast(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
+
 }
