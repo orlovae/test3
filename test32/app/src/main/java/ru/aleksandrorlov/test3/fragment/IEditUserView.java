@@ -2,8 +2,6 @@ package ru.aleksandrorlov.test3.fragment;
 
 import android.widget.EditText;
 
-import ru.aleksandrorlov.test3.model.User;
-
 /**
  * Created by alex on 23.09.17.
  */

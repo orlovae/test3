@@ -3,12 +3,9 @@ package ru.aleksandrorlov.test3.presenter.edituserfragment;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import android.widget.EditText;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -27,14 +24,12 @@ import ru.aleksandrorlov.test3.rest.ApiUser;
  */
 
 public class PresenterEditUserImpl implements IEditUser {
-    private final String LOG_TAG = this.getClass().getSimpleName();
     private IEditUserView view;
     private Context context;
 
     private User user;
     private int idServer;
     private EditText tmpEditText;
-    private Map<String, EditText> stringEditTextMap;
 
     public PresenterEditUserImpl(IEditUserView view, Context context) {
         this.view = view;
@@ -92,7 +87,6 @@ public class PresenterEditUserImpl implements IEditUser {
 
     @Override
     public void buttonOnClick(List<EditText> editTextList, EditText editTextAvatarUrl) {
-        stringEditTextMap = new HashMap<String, EditText>();
         if (invalideData(editTextList)) {
             if (isEmailValid(editTextList.get(2).getText().toString())) {
                 if (idServer != -1) {
@@ -210,13 +204,11 @@ public class PresenterEditUserImpl implements IEditUser {
     public void detachView() {
         view = null;
         context = null;
-        tmpEditText = null;
     }
 
     @Override
     public void destroy() {
         user = null;
         tmpEditText = null;
-        stringEditTextMap = null;
     }
 }

@@ -19,7 +19,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private int idServer = -1;
     boolean withEditUser = true;
 
-    public static final String NAME_BUTTON = "nameButton";
     public static final int EDIT_BUTTON = -1;
 
     @Override

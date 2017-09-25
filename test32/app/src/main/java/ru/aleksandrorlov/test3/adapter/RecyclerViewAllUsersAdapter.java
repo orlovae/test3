@@ -125,7 +125,7 @@ public class RecyclerViewAllUsersAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     public interface OnItemClickListener {
-        public void onItemClick(int idServer);
+        void onItemClick(int idServer);
     }
 
     public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
