@@ -1,5 +1,6 @@
 package ru.aleksandrorlov.test3.presenter.edituserfragment;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
@@ -96,10 +97,21 @@ public class PresenterEditUserImpl implements IEditUser {
             if (isEmailValid(editTextList.get(2).getText().toString())) {
                 if (idServer != -1) {
                     editUserToServer(createUser(editTextList, editTextAvatarUrl));
-                    //TODO изменять пользователя в БД и обновлять адаптер.
+
+                    ContentValues cv = createCV();
+
+                    String selection = Contract.User.COLUMN_ID_SERVER + " = ?";
+                    String[] selectionArgs = {Integer.toString(idServer)};
+
+                    context.getContentResolver().update(Contract.User.CONTENT_URI, cv, selection,
+                            selectionArgs);
+
                 } else {
                     addUserToServer(createUser(editTextList, editTextAvatarUrl));
-                    //TODO добавлять пользователя в БД и обновлять адаптер.
+
+                    ContentValues cv = createCV();
+
+                    context.getContentResolver().insert(Contract.User.CONTENT_URI, cv);
                 }
             } else {
                 view.setFocus(editTextList.get(2));
@@ -113,6 +125,15 @@ public class PresenterEditUserImpl implements IEditUser {
                     + tmpEditText.getHint().toString() + " "
                     + context.getResources().getString(R.string.field_valid_last));
         }
+    }
+
+    private ContentValues createCV() {
+        ContentValues cv = new ContentValues();
+        cv.put(Contract.User.COLUMN_FIRST_NAME, user.getFirstName());
+        cv.put(Contract.User.COLUMN_LAST_NAME, user.getLastName());
+        cv.put(Contract.User.COLUMN_EMAIL, user.getEmail());
+        cv.put(Contract.User.COLUMN_AVATAR_URL, user.getAvatarUrl());
+        return cv;
     }
 
     private boolean invalideData(List<EditText> editTextList) {
