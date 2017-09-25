@@ -2,11 +2,24 @@ package ru.aleksandrorlov.test3.presenter.edituserfragment;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
+import android.widget.EditText;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.aleksandrorlov.test3.R;
+import ru.aleksandrorlov.test3.controllers.ApiController;
 import ru.aleksandrorlov.test3.data.Contract;
 import ru.aleksandrorlov.test3.fragment.IEditUserView;
+import ru.aleksandrorlov.test3.model.RequestBody;
 import ru.aleksandrorlov.test3.model.User;
+import ru.aleksandrorlov.test3.rest.ApiUser;
 
 /**
  * Created by alex on 23.09.17.
@@ -19,6 +32,8 @@ public class PresenterEditUserImpl implements IEditUser {
 
     private User user;
     private int idServer;
+    private EditText tmpEditText;
+    private Map<String, EditText> stringEditTextMap;
 
     public PresenterEditUserImpl(IEditUserView view, Context context) {
         this.view = view;
@@ -75,13 +90,112 @@ public class PresenterEditUserImpl implements IEditUser {
     }
 
     @Override
+    public void buttonOnClick(List<EditText> editTextList, EditText editTextAvatarUrl) {
+        stringEditTextMap = new HashMap<String, EditText>();
+        if (invalideData(editTextList)) {
+            if (isEmailValid(editTextList.get(2).getText().toString())) {
+                if (idServer != -1) {
+                    editUserToServer(createUser(editTextList, editTextAvatarUrl));
+                    //TODO изменять пользователя в БД и обновлять адаптер.
+                } else {
+                    addUserToServer(createUser(editTextList, editTextAvatarUrl));
+                    //TODO добавлять пользователя в БД и обновлять адаптер.
+                }
+            } else {
+                view.setFocus(editTextList.get(2));
+                view.showToast(context.getResources().getString(R.string.email_no_valid));
+            }
+
+        } else {
+            view.setFocus(tmpEditText);
+            view.showToast(context.getResources().getString(R.string.field_valid_first)
+                    + " "
+                    + tmpEditText.getHint().toString() + " "
+                    + context.getResources().getString(R.string.field_valid_last));
+        }
+    }
+
+    private boolean invalideData(List<EditText> editTextList) {
+        boolean notNull = false;
+
+        try {
+            for (EditText item : editTextList
+                    ) {
+                boolean isItem = item.getText().toString().replaceAll(" ", "").length() != 0;
+                //удаляет пробелы, что бы пользователь не мог зарегестировать имя из одного пробела
+                if (isItem) {
+                    notNull = true;
+                } else {
+                    tmpEditText = item;
+                    notNull = false;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return notNull;
+    }
+
+    private boolean isEmailValid(CharSequence email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    private void editUserToServer(RequestBody requestBody) {
+        ApiUser apiUser = ApiController.API();
+        Call<ResponseBody> call = apiUser.editUser(idServer, requestBody);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    view.showToast(context.getResources().getString(R.string.user_edit));
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                view.showToast(context.getResources().getString(R.string.user_no_edit));
+            }
+        });
+    }
+
+    private void addUserToServer(RequestBody requestBody) {
+        ApiUser apiUser = ApiController.API();
+        Call<ResponseBody> call = apiUser.setUser(requestBody);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    view.showToast(context.getResources().getString(R.string.user_add));
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                view.showToast(context.getResources().getString(R.string.user_no_add));
+            }
+        });
+    }
+
+    private RequestBody createUser(List<EditText> editTextList, EditText editTextAvatarUrl) {
+        this.user = new User(
+                editTextList.get(0).getText().toString(),
+                editTextList.get(1).getText().toString(),
+                editTextList.get(2).getText().toString(),
+                editTextAvatarUrl.getText().toString()
+        );
+        return new RequestBody(user);
+    }
+
+    @Override
     public void detachView() {
         view = null;
         context = null;
+        tmpEditText = null;
     }
 
     @Override
     public void destroy() {
         user = null;
+        tmpEditText = null;
+        stringEditTextMap = null;
     }
 }

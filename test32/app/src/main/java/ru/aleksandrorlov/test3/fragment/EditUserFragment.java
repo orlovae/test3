@@ -1,10 +1,10 @@
 package ru.aleksandrorlov.test3.fragment;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,20 +14,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import ru.aleksandrorlov.test3.R;
-import ru.aleksandrorlov.test3.controllers.ApiController;
-import ru.aleksandrorlov.test3.data.Contract;
 import ru.aleksandrorlov.test3.model.User;
-import ru.aleksandrorlov.test3.model.RequestBody;
-import ru.aleksandrorlov.test3.presenter.IBasePresenter;
 import ru.aleksandrorlov.test3.presenter.edituserfragment.IEditUser;
 import ru.aleksandrorlov.test3.presenter.edituserfragment.PresenterEditUserImpl;
-import ru.aleksandrorlov.test3.rest.ApiUser;
 
 import static ru.aleksandrorlov.test3.fragment.ViewUsersFragment.SEND_USER;
 
@@ -45,7 +37,6 @@ public class EditUserFragment extends Fragment implements View.OnClickListener, 
     private int idServer;
 
     private User user;
-    private String firstName, lastName, email, avatar;
 
     private List<EditText> editTextList;
     private EditText tmpEditText;
@@ -139,102 +130,18 @@ public class EditUserFragment extends Fragment implements View.OnClickListener, 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button_edit:
-                if (invalideData()) {
-                    if (isEmailValid(editTextEmail.getText().toString())) {
-                        if (idServer != -1) {
-                            editUserToServer(createUser());
-                        } else {
-                            addUserToServer(createUser());
-                        }
-                    } else {
-                        editTextEmail.requestFocus();
-
-                        setToast(getResources().getString(R.string.email_no_valid));
-                    }
-
-                } else {
-                    tmpEditText.requestFocus();
-
-                    setToast(getResources().getString(R.string.field_valid_first) + " "
-                            + tmpEditText.getHint().toString() + " "
-                            + getResources().getString(R.string.field_valid_last));
-                }
+                presenter.buttonOnClick(editTextList, editTextAvatarUrl);
                 break;
         }
     }
 
-    private boolean invalideData() {
-        boolean notNull = false;
-
-        try {
-            for (EditText item : editTextList
-                    ) {
-                boolean isItem = item.getText().toString().replaceAll(" ", "").length() != 0;
-                //удаляет пробелы, что бы пользователь не мог зарегестировать имя из одного пробела
-                if (isItem) {
-                    notNull = true;
-                } else {
-                    tmpEditText = item;
-                    notNull = false;
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return notNull;
+    @Override
+    public void setFocus(EditText editText) {
+        editText.requestFocus();
     }
 
-    boolean isEmailValid(CharSequence email) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
-    }
-
-    private void editUserToServer(RequestBody requestBody) {
-        ApiUser apiUser = ApiController.API();
-        Call<ResponseBody> call = apiUser.editUser(idServer, requestBody);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    setToast(getResources().getString(R.string.user_edit));
-                }
-            }
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                setToast(getResources().getString(R.string.user_no_edit));
-            }
-        });
-    }
-
-    private void addUserToServer(RequestBody requestBody) {
-        ApiUser apiUser = ApiController.API();
-        Call<ResponseBody> call = apiUser.setUser(requestBody);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    setToast(getResources().getString(R.string.user_add));
-                }
-            }
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                setToast(getResources().getString(R.string.user_no_add));
-            }
-        });
-    }
-
-    private RequestBody createUser() {
-        User user = new User(
-                editTextFirstName.getText().toString(),
-                editTextLastName.getText().toString(),
-                editTextEmail.getText().toString(),
-                editTextAvatarUrl.getText().toString()
-        );
-        return new RequestBody(user);
-    }
-
-    private void setToast(String message) {
+    @Override
+    public void showToast(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
-
 }

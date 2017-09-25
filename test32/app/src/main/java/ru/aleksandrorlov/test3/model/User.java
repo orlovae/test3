@@ -158,4 +158,11 @@ public class User {
                 .append(updatedAt, rhs.updatedAt)
                 .isEquals();
     }
+
+    public static final Comparator<User> COMPARE_BY_COUNT = new Comparator<User>() {
+        @Override
+        public int compare(User lhs, User rhs) {
+            return lhs.getId() - rhs.getId();
+        }
+    };
 }

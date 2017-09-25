@@ -1,5 +1,7 @@
 package ru.aleksandrorlov.test3.fragment;
 
+import android.widget.EditText;
+
 import ru.aleksandrorlov.test3.model.User;
 
 /**
@@ -8,5 +10,7 @@ import ru.aleksandrorlov.test3.model.User;
 
 public interface IEditUserView {
     void setNameButton(String nameButton);
+    void showToast(String message);
+    void setFocus(EditText editText);
 
 }

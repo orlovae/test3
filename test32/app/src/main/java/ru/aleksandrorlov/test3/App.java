@@ -69,8 +69,11 @@ public class App extends Application {
         CursorAdapter cursorAdapter = new CursorAdapter();
         List<User> usersFromCursor = cursorAdapter.getListToCursor(cursor);
 
+        Collections.sort(users, User.COMPARE_BY_COUNT);
+        Collections.sort(usersFromCursor, User.COMPARE_BY_COUNT);
 
-        if (!users.removeAll(usersFromCursor)){
+
+        if (!users.equals(usersFromCursor)){
             getContentResolver().delete(Contract.User.CONTENT_URI, null, null);
             createNewUserTable(users);
         }
