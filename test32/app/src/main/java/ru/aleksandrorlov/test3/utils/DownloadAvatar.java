@@ -11,6 +11,8 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -67,21 +69,19 @@ public class DownloadAvatar extends AsyncTask<Void, Void, Void> {
             if (url != null && !url.equals("")) {
                 try {
                     InputStream inputStream = new URL(url).openStream();
+                    byte[] bytes = IOUtils.toByteArray(inputStream);
+                    inputStream.close();
 
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inJustDecodeBounds = true;
-                    bitmap = BitmapFactory.decodeStream(inputStream, null, options);
-                    inputStream.close();
-
+                    bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
                     typeImage = options.outMimeType;
 
                     //Захардкорил, т.к. не опеделился, какого размера должны быть аватары на экране.
                     options.inSampleSize = calculateInSampleSize(options, 100, 200);
                     options.inJustDecodeBounds = false;
 
-                    InputStream iS = new URL(url).openStream();
-                    bitmap = BitmapFactory.decodeStream(iS, null, options);
-                    iS.close();
+                    bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
 
                     fileName = createNameFile(url);
                 } catch (Exception e) {
