@@ -3,6 +3,7 @@ package ru.aleksandrorlov.test3.presenter.edituserfragment;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.widget.EditText;
 
 import java.util.List;
@@ -24,6 +25,7 @@ import ru.aleksandrorlov.test3.rest.ApiUser;
  */
 
 public class PresenterEditUserImpl implements IEditUser {
+    private final String LOG_TAG = this.getClass().getSimpleName();
     private IEditUserView view;
     private Context context;
 
@@ -52,9 +54,10 @@ public class PresenterEditUserImpl implements IEditUser {
 
     @Override
     public User getData(int idServer) {
+        Log.d(LOG_TAG, "idServer = " + idServer);
         String selection = Contract.User.COLUMN_ID_SERVER + " LIKE ?";
 
-        String[] selectionArgs = {"%" + idServer + "%"};
+        String[] selectionArgs = {Integer.toString(idServer)};
 
         Cursor data = context.getContentResolver().query(Contract.User.CONTENT_URI, null,
                 selection, selectionArgs, null);
