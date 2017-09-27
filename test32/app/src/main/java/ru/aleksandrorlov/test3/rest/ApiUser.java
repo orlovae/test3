@@ -21,8 +21,8 @@ public interface ApiUser {
     Call<List<User>> getUsers();
 
     @POST("users.json")
-    Call<ResponseBody> setUser(@Body RequestBody requestBody);
+    Call<User> setUser(@Body RequestBody requestBody);
 
     @PATCH("users/{id}.json")
-    Call<ResponseBody> editUser(@Path("id") int idServer, @Body RequestBody requestBody);
+    Call<User> editUser(@Path("id") int idServer, @Body RequestBody requestBody);
 }

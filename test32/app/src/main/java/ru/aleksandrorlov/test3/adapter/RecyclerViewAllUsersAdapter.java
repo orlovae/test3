@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,6 +90,7 @@ public class RecyclerViewAllUsersAdapter extends RecyclerView.Adapter<RecyclerVi
             public void onClick(View view) {
                 if (mItemClickListener != null) {
                     mItemClickListener.onItemClick(idServer);
+                    Log.d("Recycler", "idServer = " + idServer);
                 }
             }
         });

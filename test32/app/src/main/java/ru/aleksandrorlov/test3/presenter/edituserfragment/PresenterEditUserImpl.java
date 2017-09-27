@@ -7,10 +7,10 @@ import android.widget.EditText;
 
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.aleksandrorlov.test3.App;
 import ru.aleksandrorlov.test3.R;
 import ru.aleksandrorlov.test3.controllers.ApiController;
 import ru.aleksandrorlov.test3.data.Contract;
@@ -27,7 +27,7 @@ public class PresenterEditUserImpl implements IEditUser {
     private IEditUserView view;
     private Context context;
 
-    private User user;
+    private User userFromDB;
     private int idServer;
     private EditText tmpEditText;
 
@@ -74,7 +74,7 @@ public class PresenterEditUserImpl implements IEditUser {
                     String email = data.getString(emailCollIndex);
                     String avatar = data.getString(avatarURLColIndex);
 
-                    user = new User(id, firstName, lastName, email, avatar);
+                    userFromDB = new User(id, firstName, lastName, email, avatar);
                 } while (data.moveToNext());
             }
         } catch (Exception e) {
@@ -82,7 +82,7 @@ public class PresenterEditUserImpl implements IEditUser {
         } finally {
             if (data != null) data.close();
         }
-        return user;
+        return userFromDB;
     }
 
     @Override
@@ -91,27 +91,13 @@ public class PresenterEditUserImpl implements IEditUser {
             if (isEmailValid(editTextList.get(2).getText().toString())) {
                 if (idServer != -1) {
                     editUserToServer(createUser(editTextList, editTextAvatarUrl));
-
-                    ContentValues cv = createCV();
-
-                    String selection = Contract.User.COLUMN_ID_SERVER + " = ?";
-                    String[] selectionArgs = {Integer.toString(idServer)};
-
-                    context.getContentResolver().update(Contract.User.CONTENT_URI, cv, selection,
-                            selectionArgs);
-
                 } else {
                     addUserToServer(createUser(editTextList, editTextAvatarUrl));
-
-                    ContentValues cv = createCV();
-
-                    context.getContentResolver().insert(Contract.User.CONTENT_URI, cv);
                 }
             } else {
                 view.setFocus(editTextList.get(2));
                 view.showToast(context.getResources().getString(R.string.email_no_valid));
             }
-
         } else {
             view.setFocus(tmpEditText);
             view.showToast(context.getResources().getString(R.string.field_valid_first)
@@ -121,12 +107,15 @@ public class PresenterEditUserImpl implements IEditUser {
         }
     }
 
-    private ContentValues createCV() {
+    private ContentValues createCV(User user) {
         ContentValues cv = new ContentValues();
+        cv.put(Contract.User.COLUMN_ID_SERVER, user.getId());
         cv.put(Contract.User.COLUMN_FIRST_NAME, user.getFirstName());
         cv.put(Contract.User.COLUMN_LAST_NAME, user.getLastName());
         cv.put(Contract.User.COLUMN_EMAIL, user.getEmail());
         cv.put(Contract.User.COLUMN_AVATAR_URL, user.getAvatarUrl());
+        cv.put(Contract.User.COLUMN_CREATE_AT, user.getCreatedAt());
+        cv.put(Contract.User.COLUMN_UPDATE_AT, user.getUpdatedAt());
         return cv;
     }
 
@@ -158,16 +147,17 @@ public class PresenterEditUserImpl implements IEditUser {
 
     private void editUserToServer(RequestBody requestBody) {
         ApiUser apiUser = ApiController.API();
-        Call<ResponseBody> call = apiUser.editUser(idServer, requestBody);
-        call.enqueue(new Callback<ResponseBody>() {
+        Call<User> call = apiUser.editUser(idServer, requestBody);
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
+                    editUserToDB(response.body());
                     view.showToast(context.getResources().getString(R.string.user_edit));
                 }
             }
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 view.showToast(context.getResources().getString(R.string.user_no_edit));
             }
         });
@@ -175,29 +165,48 @@ public class PresenterEditUserImpl implements IEditUser {
 
     private void addUserToServer(RequestBody requestBody) {
         ApiUser apiUser = ApiController.API();
-        Call<ResponseBody> call = apiUser.setUser(requestBody);
-        call.enqueue(new Callback<ResponseBody>() {
+        Call<User> call = apiUser.setUser(requestBody);
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
+                    addUserToDB(response.body());
                     view.showToast(context.getResources().getString(R.string.user_add));
                 }
             }
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 view.showToast(context.getResources().getString(R.string.user_no_add));
             }
         });
     }
 
     private RequestBody createUser(List<EditText> editTextList, EditText editTextAvatarUrl) {
-        this.user = new User(
+        this.userFromDB = new User(
                 editTextList.get(0).getText().toString(),
                 editTextList.get(1).getText().toString(),
                 editTextList.get(2).getText().toString(),
                 editTextAvatarUrl.getText().toString()
         );
-        return new RequestBody(user);
+        return new RequestBody(userFromDB);
+    }
+
+    private void addUserToDB(User user) {
+        context.getContentResolver().insert(Contract.User.CONTENT_URI, createCV(user));
+        App.getInstance().downloadAvatar(user.getId(), user.getAvatarUrl());
+    }
+
+    private void editUserToDB(User userFromServer) {
+        String selection = Contract.User.COLUMN_ID_SERVER + " = ?";
+        String[] selectionArgs = {Integer.toString(userFromServer.getId())};
+
+        context.getContentResolver().update(Contract.User.CONTENT_URI,
+                createCV(userFromServer),
+                selection,
+                selectionArgs);
+        if (!userFromDB.getAvatarUrl().equals(userFromServer.getAvatarUrl())) {
+            App.getInstance().downloadAvatar(userFromServer.getId(), userFromServer.getAvatarUrl());
+        }
     }
 
     @Override
@@ -208,7 +217,7 @@ public class PresenterEditUserImpl implements IEditUser {
 
     @Override
     public void destroy() {
-        user = null;
+        userFromDB = null;
         tmpEditText = null;
     }
 }

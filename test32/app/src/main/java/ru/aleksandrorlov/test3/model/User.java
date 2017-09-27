@@ -159,7 +159,7 @@ public class User {
                 .isEquals();
     }
 
-    public static final Comparator<User> COMPARE_BY_COUNT = new Comparator<User>() {
+    public static final Comparator<User> COMPARE_BY_ID_SERVER = new Comparator<User>() {
         @Override
         public int compare(User lhs, User rhs) {
             return lhs.getId() - rhs.getId();
