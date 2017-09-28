@@ -27,7 +27,6 @@ public final class Contract {
         public static final String COLUMN_LAST_NAME = "last_name";
         public static final String COLUMN_EMAIL = "email";
         public static final String COLUMN_AVATAR_URL = "avatar_url";
-        public static final String COLUMN_AVATAR_PATH = "avatar_path";
         public static final String COLUMN_CREATE_AT = "created_at";
         public static final String COLUMN_UPDATE_AT = "updated_at";
 

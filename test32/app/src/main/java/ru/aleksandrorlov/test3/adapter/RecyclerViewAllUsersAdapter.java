@@ -2,7 +2,11 @@ package ru.aleksandrorlov.test3.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -65,24 +69,24 @@ public class RecyclerViewAllUsersAdapter extends RecyclerView.Adapter<RecyclerVi
         int firstNameColIndex = dataCursor.getColumnIndex(Contract.User.COLUMN_FIRST_NAME);
         int lastNameColIndex = dataCursor.getColumnIndex(Contract.User.COLUMN_LAST_NAME);
         int emailColIndex = dataCursor.getColumnIndex(Contract.User.COLUMN_EMAIL);
-        int avatarPathColIndex = dataCursor.getColumnIndex(Contract.User.COLUMN_AVATAR_PATH);
+        int avatarURLColIndex = dataCursor.getColumnIndex(Contract.User.COLUMN_AVATAR_URL);
 
         final int idServer = dataCursor.getInt(idServerColIndex);
         String firstNameFromCursor = dataCursor.getString(firstNameColIndex);
         String lastNameFromCursor = dataCursor.getString(lastNameColIndex);
         String emailFromCursor = dataCursor.getString(emailColIndex);
-        String avatarPath = dataCursor.getString(avatarPathColIndex);
+        String avatarURL = dataCursor.getString(avatarURLColIndex);
 
-        Uri imageUri = null;
-        if (avatarPath != null) {
-            imageUri = Uri.fromFile(new File(avatarPath));
+        if (avatarURL.equals("")) {
+            avatarURL = Integer.toString(R.drawable.error_download_image);
         }
 
         Picasso.with(context)
-                .load(imageUri)
+                .load(avatarURL)
                 .resize((int)Math.round(width * COMPRESSION_PICTURE),
                         (int)Math.round(height * COMPRESSION_PICTURE))
                 .placeholder(R.drawable.progress_animation)
+                .error(R.drawable.error_download_image)
                 .into(holder.imageViewAvatar);
 
         holder.itemClick.setOnClickListener(new View.OnClickListener() {

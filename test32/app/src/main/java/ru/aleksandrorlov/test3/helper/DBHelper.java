@@ -22,7 +22,6 @@ public class DBHelper extends SQLiteOpenHelper {
             + Contract.User.COLUMN_LAST_NAME + " text,"
             + Contract.User.COLUMN_EMAIL + " text,"
             + Contract.User.COLUMN_AVATAR_URL + " text,"
-            + Contract.User.COLUMN_AVATAR_PATH + " text,"
             + Contract.User.COLUMN_CREATE_AT + " text,"
             + Contract.User.COLUMN_UPDATE_AT + " text);";
 

@@ -11,7 +11,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.aleksandrorlov.test3.App;
 import ru.aleksandrorlov.test3.R;
 import ru.aleksandrorlov.test3.controllers.ApiController;
 import ru.aleksandrorlov.test3.data.Contract;
@@ -196,7 +195,6 @@ public class PresenterEditUserImpl implements IEditUser {
 
     private void addUserToDB(User user) {
         context.getContentResolver().insert(Contract.User.CONTENT_URI, createCV(user));
-        App.getInstance().downloadAvatar(user.getId(), user.getAvatarUrl());
     }
 
     private void editUserToDB(User userFromServer) {
@@ -207,9 +205,6 @@ public class PresenterEditUserImpl implements IEditUser {
                 createCV(userFromServer),
                 selection,
                 selectionArgs);
-        if (!userFromDB.getAvatarUrl().equals(userFromServer.getAvatarUrl())) {
-            App.getInstance().downloadAvatar(userFromServer.getId(), userFromServer.getAvatarUrl());
-        }
     }
 
     @Override

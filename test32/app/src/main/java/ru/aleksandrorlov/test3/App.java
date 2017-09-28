@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.TreeMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,24 +21,17 @@ import ru.aleksandrorlov.test3.controllers.ApiController;
 import ru.aleksandrorlov.test3.data.Contract;
 import ru.aleksandrorlov.test3.model.User;
 import ru.aleksandrorlov.test3.rest.ApiUser;
-import ru.aleksandrorlov.test3.utils.DownloadAvatar;
 
 /**
  * Created by alex on 05.09.17.
  */
 
 public class App extends Application {
-    private static App sInstance = null;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        sInstance = this;
         init();
-    }
-
-    public static App getInstance() {
-        return sInstance ;
     }
 
     private void init() {
@@ -105,23 +97,12 @@ public class App extends Application {
         for (User item:usersFromServer
                 ) {
             getContentResolver().insert(Contract.User.CONTENT_URI, createCV(item));
-            downloadAvatar(item.getId(), item.getAvatarUrl());
         }
-    }
-
-    public void downloadAvatar(int idServer, String avatarURL) {
-        TreeMap<Integer, String> mapForDownloadAvatar = new TreeMap<>();
-        mapForDownloadAvatar.put(idServer, avatarURL);
-
-        DownloadAvatar downloadAvatar = new DownloadAvatar(getApplicationContext(),
-                mapForDownloadAvatar);
-        downloadAvatar.execute();
     }
 
     private void synchronizedDB(List<User> usersFromServer) {
         Log.d("App", "synchronizedDB start");
         int idServerFromServer;
-        String avatarURLFromServer;
         Date updatedAtFromServer = null;
         Date updatedAtFromDB;
         String selection = Contract.User.COLUMN_ID_SERVER + " LIKE ?";
@@ -133,7 +114,6 @@ public class App extends Application {
         for (User item:usersFromServer
              ) {
             idServerFromServer = item.getId();
-            avatarURLFromServer = item.getAvatarUrl();
 
             try {
                 updatedAtFromServer = format.parse(item.getUpdatedAt());
@@ -154,11 +134,9 @@ public class App extends Application {
 
                     if (updatedAtFromServer.after(updatedAtFromDB)) {
                         updateUserFromDB(idServerFromServer, item);
-                        downloadAvatar(idServerFromServer, avatarURLFromServer);
                     }
                 } else {
                     insertNewUserToDB(item);
-                    downloadAvatar(idServerFromServer, avatarURLFromServer);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
