@@ -42,6 +42,7 @@ https://bb-test-server.herokuapp.com
 ## Создание пользователя на сервере 
 После нажатия отправляется POST запрос на сервер с данными о пользователе.
 ### POST /users.json
+```php
 {
 "user": {
     "first_name":"Foo",
@@ -50,6 +51,7 @@ https://bb-test-server.herokuapp.com
     "avatar_url":""
     }
 }
+```
 ### Response
 * Успешное выполнение запроса: `201 Created`
 * При наличии ошибок: `422 Unprocessable Entity` с описанием ошибок в теле респонса.
